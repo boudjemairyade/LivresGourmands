@@ -1,0 +1,338 @@
+{
+  "info": {
+    "name": "LivresGourmands API",
+    "description": "Collection de tests pour l'API LivresGourmands.net",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentification",
+      "item": [
+        {
+          "name": "Inscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Connexion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jean.dupont@email.com\",\n  \"password\": \"client123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('jwt_token', response.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Profil Utilisateur",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ouvrages",
+      "item": [
+        {
+          "name": "Liste des Ouvrages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ouvrages?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["ouvrages"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Recherche Ouvrages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ouvrages?search=cuisine&categorie_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["ouvrages"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "cuisine"
+                },
+                {
+                  "key": "categorie_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Détail Ouvrage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ouvrages/1",
+              "host": ["{{base_url}}"],
+              "path": ["ouvrages", "1"]
+            }
+          }
+        },
+        {
+          "name": "Créer Ouvrage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titre\": \"Nouveau Livre de Cuisine\",\n  \"auteur\": \"Chef Test\",\n  \"isbn\": \"978-2-123456-99-9\",\n  \"description\": \"Un livre de cuisine pour débutants\",\n  \"prix\": 25.99,\n  \"stock\": 50,\n  \"categorie_id\": 1,\n  \"image_url\": \"/images/nouveau-livre.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ouvrages",
+              "host": ["{{base_url}}"],
+              "path": ["ouvrages"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catégories",
+      "item": [
+        {
+          "name": "Liste des Catégories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            }
+          }
+        },
+        {
+          "name": "Détail Catégorie",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Créer Catégorie",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Cuisine Fusion\",\n  \"description\": \"Recettes mélangeant différentes cultures culinaires\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Panier",
+      "item": [
+        {
+          "name": "Récupérer Panier",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/panier",
+              "host": ["{{base_url}}"],
+              "path": ["panier"]
+            }
+          }
+        },
+        {
+          "name": "Ajouter au Panier",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ouvrage_id\": 1,\n  \"quantite\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/panier/items",
+              "host": ["{{base_url}}"],
+              "path": ["panier", "items"]
+            }
+          }
+        },
+        {
+          "name": "Modifier Quantité",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantite\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/panier/items/1",
+              "host": ["{{base_url}}"],
+              "path": ["panier", "items", "1"]
+            }
+          }
+        },
+        {
+          "name": "Supprimer du Panier",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/panier/items/1",
+              "host": ["{{base_url}}"],
+              "path": ["panier", "items", "1"]
+            }
+          }
+        },
+        {
+          "name": "Vider Panier",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/panier",
+              "host": ["{{base_url}}"],
+              "path": ["panier"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tests de Santé",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/../health",
+              "host": ["{{base_url}}"],
+              "path": ["..", "health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
